@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TextField, MenuItem, Container } from "@mui/material";
+import axios from "axios";
 
 const categories = ["All", "Food", "Transport", "Shopping", "Entertainment"];
 
@@ -7,16 +8,39 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
   const [showDateRange, setShowDateRange] = useState(false);
 
   useEffect(() => {
-    if (filterType === "date") {
-      setShowDateRange(true);
-    } else {
-      setShowDateRange(false);
-    }
+    setShowDateRange(filterType === "date");
   }, [filterType]);
+
+  // Function to fetch expenses from the backend
+  const fetchExpenses = async () => {
+    try {
+      if (filterType === "category" && (filters.category || filters.date)) {
+        const response = await axios.get("http://localhost:5000/api/expenses", {
+          params: {
+            category: filters.category ?? null,
+            date: filters.date ?? null,
+          },
+        });
+        console.log("Fetched Expenses:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    }
+  };
+
+  // Call API when category or date is selected
+  useEffect(() => {
+    if (filterType === "category") {
+      fetchExpenses();
+    }
+  }, [filters.category, filters.date]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value || null, // If empty, set to null
+    }));
   };
 
   return (
@@ -28,7 +52,7 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
             select
             label="Category"
             name="category"
-            value={filters.category}
+            value={filters.category ?? ""}
             onChange={handleChange}
             fullWidth
           >
@@ -44,7 +68,7 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
             label="Date"
             name="date"
             type="date"
-            value={filters.date}
+            value={filters.date ?? ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth
@@ -52,14 +76,14 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
         </>
       )}
 
-      {/* Date Range Filter */}
+      {/* Date Range Filter (Not triggering API call) */}
       {showDateRange && filterType === "date" && (
         <>
           <TextField
             label="Start Date"
             name="startDate"
             type="date"
-            value={filters.startDate}
+            value={filters.startDate ?? ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth
@@ -68,7 +92,7 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
             label="End Date"
             name="endDate"
             type="date"
-            value={filters.endDate}
+            value={filters.endDate ?? ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth
