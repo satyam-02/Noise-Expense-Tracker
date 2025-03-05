@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { TextField, Button, MenuItem, Container } from "@mui/material";
 
 const categories = ["Food", "Transport", "Shopping", "Entertainment"];
 
-const ExpenseForm = ({ addExpense }) => {
+const ExpenseForm = ({ onClose }) => {
   const [expense, setExpense] = useState({
     amount: "",
     category: "",
@@ -11,14 +12,35 @@ const ExpenseForm = ({ addExpense }) => {
     description: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     setExpense({ ...expense, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const isFormValid = Object.values(expense).every((field) => field.trim() !== "");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addExpense(expense);
-    setExpense({ amount: "", category: "", date: "", description: "" });
+    if (!isFormValid) {
+      setError("All fields are required!");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await axios.post("http://localhost:5000/api/expenses", expense);
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError("Failed to add expense. Please try again.");
+    } finally {
+      setLoading(false);
+      setExpense({ amount: "", category: "", date: "", description: "" });
+    }
   };
 
   return (
@@ -68,9 +90,16 @@ const ExpenseForm = ({ addExpense }) => {
           onChange={handleChange}
           fullWidth
           margin="normal"
+          required
         />
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-          Add Expense
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{ mt: 2 }}
+          disabled={loading || !isFormValid}
+        >
+          {loading ? "Adding..." : "Add Expense"}
         </Button>
       </form>
     </Container>
