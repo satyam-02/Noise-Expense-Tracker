@@ -7,29 +7,67 @@ import { Button, Dialog, DialogTitle, DialogContent, Collapse } from "@mui/mater
 import FilterBar from "./components/FilterBar";
 
 function App() {
-  const [filters, setFilters] = useState({ category: "All", date: "" });
+  const [filters, setFilters] = useState({
+    category: "All",
+    startDate: "",
+    endDate: "",
+  });
+
   const [openExpenseModal, setOpenExpenseModal] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
+  const [dateFilterOpen, setDateFilterOpen] = useState(false);
+
+  // Toggle Category Filter (Disable Date Filter)
+  const toggleCategoryFilter = () => {
+    setCategoryFilterOpen(!categoryFilterOpen);
+    if (!categoryFilterOpen) setDateFilterOpen(false); // Close Date Filter
+  };
+
+  // Toggle Date Filter (Disable Category Filter)
+  const toggleDateFilter = () => {
+    setDateFilterOpen(!dateFilterOpen);
+    if (!dateFilterOpen) setCategoryFilterOpen(false); // Close Category Filter
+  };
 
   return (
     <>
       <Navbar />
 
       <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px" }}>
-        <Button variant="contained" color="secondary" onClick={() => setShowFilters(!showFilters)}>
-          {showFilters ? "Hide Filters" : "Show Filters"}
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={toggleCategoryFilter}
+          disabled={dateFilterOpen} // Disable when Date Filter is open
+        >
+          {categoryFilterOpen ? "Hide Category Filter" : "Filter by Category"}
         </Button>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={toggleDateFilter}
+          disabled={categoryFilterOpen} // Disable when Category Filter is open
+        >
+          {dateFilterOpen ? "Hide Date Filter" : "Filter by Date"}
+        </Button>
+
         <Button variant="contained" color="primary" onClick={() => setOpenExpenseModal(true)}>
           Add Expense
         </Button>
       </div>
 
-      {/* Collapsible Filter Bar */}
-      <Collapse in={showFilters}>
-        <FilterBar filters={filters} setFilters={setFilters} />
+      {/* Category Filter */}
+      <Collapse in={categoryFilterOpen}>
+        <FilterBar filters={filters} setFilters={setFilters} filterType="category" />
       </Collapse>
 
-      {/* Expense Table - Fetches data internally */}
+      {/* Date Range Filter */}
+      <Collapse in={dateFilterOpen}>
+        <FilterBar filters={filters} setFilters={setFilters} filterType="date" />
+      </Collapse>
+
+      {/* Expense Table */}
       <ExpenseTable filters={filters} />
 
       {/* Add Expense Modal */}
