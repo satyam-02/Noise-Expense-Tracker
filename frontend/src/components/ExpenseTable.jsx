@@ -42,7 +42,7 @@ const ExpenseTable = ({ expenses }) => {
           ) : (
             expenses.map((expense) => (
               <TableRow key={expense.id}>
-                <TableCell>{expense.date}</TableCell>
+               <TableCell>{new Date(expense.date).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{expense.category}</TableCell>
                 <TableCell>₹{expense.amount}</TableCell>
                 <TableCell>{expense.description}</TableCell>
