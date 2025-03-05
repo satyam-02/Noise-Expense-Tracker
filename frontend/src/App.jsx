@@ -4,7 +4,16 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseTable from "./components/ExpenseTable";
-import { Button, Dialog, DialogTitle, DialogContent, Collapse, Typography, Box } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Collapse,
+  Typography,
+  Box,
+  Paper,
+} from "@mui/material";
 import FilterBar from "./components/FilterBar";
 import TotalExpense from "./components/TotalExpense";
 
@@ -29,12 +38,12 @@ function App() {
     if (!totalExpenseOpen) setCategoryFilterOpen(false);
   };
 
-  // Fetch expenses from API based on filters
   const fetchExpenses = async (appliedFilters) => {
     try {
       const response = await axios.get("http://localhost:5000/api/expenses", {
         params: {
-          category: appliedFilters.category !== "All" ? appliedFilters.category : null,
+          category:
+            appliedFilters.category !== "All" ? appliedFilters.category : null,
           date: appliedFilters.date || null,
         },
       });
@@ -44,12 +53,10 @@ function App() {
     }
   };
 
-  // Callback function to fetch data when filters change
   const handleFilterChange = (updatedFilters) => {
     fetchExpenses(updatedFilters);
   };
 
-  // Initial fetch on mount
   useEffect(() => {
     fetchExpenses(filters);
   }, []);
@@ -58,49 +65,117 @@ function App() {
     <>
       <Navbar />
 
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px" }}>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={toggleCategoryFilter}
-          disabled={totalExpenseOpen}
+      <Paper
+        elevation={4}
+        sx={{
+          maxWidth: 800,
+          mx: "auto",
+          mt: 4,
+          p: 3,
+          border: "2px solid #ccc",
+          borderRadius: 4,
+          boxShadow: 3,
+          backgroundColor: "#fafafa",
+        }}
+      >
+        {/* Button Section */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 2,
+          }}
         >
-          {categoryFilterOpen ? "Hide Category Filter" : "Filter by Category"}
-        </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={toggleCategoryFilter}
+            disabled={totalExpenseOpen}
+            sx={{ borderRadius: 2, px: 3, py: 1 }}
+          >
+            {categoryFilterOpen ? "Hide Category Filter" : "Filter by Category"}
+          </Button>
 
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={toggleTotalExpense}
-          disabled={categoryFilterOpen}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={toggleTotalExpense}
+            disabled={categoryFilterOpen}
+            sx={{ borderRadius: 2, px: 3, py: 1 }}
+          >
+            {totalExpenseOpen ? "Hide Total Expense" : "View Total Expense"}
+          </Button>
+
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setOpenExpenseModal(true)}
+            sx={{ borderRadius: 2, px: 3, py: 1 }}
+          >
+            Add Expense
+          </Button>
+        </Box>
+
+        {/* Filter Bar */}
+        <Collapse in={categoryFilterOpen}>
+          <Paper
+            elevation={3}
+            sx={{ p: 2, mt: 3, maxWidth: 600, mx: "auto", borderRadius: 2 }}
+          >
+            <FilterBar
+              filters={filters}
+              setFilters={setFilters}
+              onFilterChange={handleFilterChange}
+              filterType="category"
+            />
+          </Paper>
+        </Collapse>
+
+        {/* Total Expense Section */}
+        <Collapse in={totalExpenseOpen}>
+          <Paper
+            elevation={3}
+            sx={{ p: 2, mt: 3, maxWidth: 600, mx: "auto", borderRadius: 2 }}
+          >
+            <TotalExpense />
+          </Paper>
+        </Collapse>
+
+        {/* Expense Table */}
+        <Box sx={{ mt: 4 }}>
+          <ExpenseTable expenses={expenses} />
+        </Box>
+      </Paper>
+
+      {/* Add Expense Modal */}
+      <Dialog
+        open={openExpenseModal}
+        onClose={() => setOpenExpenseModal(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: 3,
+            boxShadow: 5,
+            p: 3,
+            maxWidth: 500,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+            pb: 1,
+          }}
         >
-          {totalExpenseOpen ? "Hide Total Expense" : "View Total Expense"}
-        </Button>
-
-        <Button variant="contained" color="secondary" onClick={() => setOpenExpenseModal(true)}>
           Add Expense
-        </Button>
-      </div>
+        </DialogTitle>
 
-      <Collapse in={categoryFilterOpen}>
-        <FilterBar filters={filters} setFilters={setFilters} onFilterChange={handleFilterChange} filterType="category" />
-      </Collapse>
-
-      <Collapse in={totalExpenseOpen}>
-        <TotalExpense />
-      </Collapse>
-
-      <ExpenseTable expenses={expenses} />
-
-      <Dialog open={openExpenseModal} onClose={() => setOpenExpenseModal(false)}>
-  <Box display="flex" justifyContent="center" alignItems="center" p={2}>
-    <Typography variant="h4" fontWeight="bold">Add Expense</Typography>
-  </Box>
-
-  <Box marginBottom="50px">
-    <ExpenseForm onClose={() => setOpenExpenseModal(false)} />
-  </Box>
-</Dialog>
+        <DialogContent>
+          <ExpenseForm onClose={() => setOpenExpenseModal(false)} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
