@@ -3,8 +3,15 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseTable from "./components/ExpenseTable";
-import { Button, Dialog, DialogTitle, DialogContent, Collapse } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Collapse,
+} from "@mui/material";
 import FilterBar from "./components/FilterBar";
+import TotalExpense from "./components/TotalExpense"; // Import TotalExpense component
 
 function App() {
   const [filters, setFilters] = useState({
@@ -15,30 +22,37 @@ function App() {
 
   const [openExpenseModal, setOpenExpenseModal] = useState(false);
   const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
-  const [dateFilterOpen, setDateFilterOpen] = useState(false);
+  const [totalExpenseOpen, setTotalExpenseOpen] = useState(false); // State for Total Expense
 
-  // Toggle Category Filter (Disable Date Filter)
+  // Toggle Category Filter (Disable Total Expense)
   const toggleCategoryFilter = () => {
     setCategoryFilterOpen(!categoryFilterOpen);
-    if (!categoryFilterOpen) setDateFilterOpen(false); // Close Date Filter
+    if (!categoryFilterOpen) setTotalExpenseOpen(false); // Close Total Expense if opening Category Filter
   };
 
-  // Toggle Date Filter (Disable Category Filter)
-  const toggleDateFilter = () => {
-    setDateFilterOpen(!dateFilterOpen);
-    if (!dateFilterOpen) setCategoryFilterOpen(false); // Close Category Filter
+  // Toggle Total Expense View (Disable Category Filter)
+  const toggleTotalExpense = () => {
+    setTotalExpenseOpen(!totalExpenseOpen);
+    if (!totalExpenseOpen) setCategoryFilterOpen(false); // Close Category Filter if opening Total Expense
   };
 
   return (
     <>
       <Navbar />
 
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "10px",
+          margin: "20px",
+        }}
+      >
         <Button
           variant="contained"
           color="secondary"
           onClick={toggleCategoryFilter}
-          disabled={dateFilterOpen} // Disable when Date Filter is open
+          disabled={totalExpenseOpen} // Disable if Total Expense is open
         >
           {categoryFilterOpen ? "Hide Category Filter" : "Filter by Category"}
         </Button>
@@ -46,13 +60,17 @@ function App() {
         <Button
           variant="contained"
           color="secondary"
-          onClick={toggleDateFilter}
-          disabled={categoryFilterOpen} // Disable when Category Filter is open
+          onClick={toggleTotalExpense}
+          disabled={categoryFilterOpen} // Disable if Category Filter is open
         >
-          {dateFilterOpen ? "Hide Date Filter" : "Filter by Date"}
+          {totalExpenseOpen ? "Hide Total Expense" : "View Total Expense"}
         </Button>
 
-        <Button variant="contained" color="primary" onClick={() => setOpenExpenseModal(true)}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenExpenseModal(true)}
+        >
           Add Expense
         </Button>
       </div>
@@ -62,16 +80,19 @@ function App() {
         <FilterBar filters={filters} setFilters={setFilters} filterType="category" />
       </Collapse>
 
-      {/* Date Range Filter */}
-      <Collapse in={dateFilterOpen}>
-        <FilterBar filters={filters} setFilters={setFilters} filterType="date" />
+      {/* Total Expense Section */}
+      <Collapse in={totalExpenseOpen}>
+        <TotalExpense />
       </Collapse>
 
       {/* Expense Table */}
       <ExpenseTable filters={filters} />
 
       {/* Add Expense Modal */}
-      <Dialog open={openExpenseModal} onClose={() => setOpenExpenseModal(false)}>
+      <Dialog
+        open={openExpenseModal}
+        onClose={() => setOpenExpenseModal(false)}
+      >
         <DialogTitle>Add Expense</DialogTitle>
         <DialogContent>
           <ExpenseForm onClose={() => setOpenExpenseModal(false)} />

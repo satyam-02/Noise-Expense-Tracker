@@ -5,12 +5,6 @@ import axios from "axios";
 const categories = ["All", "Food", "Transport", "Shopping", "Entertainment"];
 
 const FilterBar = ({ filters, setFilters, filterType }) => {
-  const [showDateRange, setShowDateRange] = useState(false);
-
-  useEffect(() => {
-    setShowDateRange(filterType === "date");
-  }, [filterType]);
-
   // Function to fetch expenses from the backend
   const fetchExpenses = async () => {
     try {
@@ -39,7 +33,7 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [name]: value || null, // If empty, set to null
+      [name]: value || null,
     }));
   };
 
@@ -69,30 +63,6 @@ const FilterBar = ({ filters, setFilters, filterType }) => {
             name="date"
             type="date"
             value={filters.date ?? ""}
-            onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-          />
-        </>
-      )}
-
-      {/* Date Range Filter (Not triggering API call) */}
-      {showDateRange && filterType === "date" && (
-        <>
-          <TextField
-            label="Start Date"
-            name="startDate"
-            type="date"
-            value={filters.startDate ?? ""}
-            onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-          />
-          <TextField
-            label="End Date"
-            name="endDate"
-            type="date"
-            value={filters.endDate ?? ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth
