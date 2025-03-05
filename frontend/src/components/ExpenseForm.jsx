@@ -32,7 +32,14 @@ const ExpenseForm = ({ onClose }) => {
     setError("");
 
     try {
-      await axios.post("http://localhost:5000/api/expenses", expense);
+
+      const adjustedDate = new Date(expense.date);
+      adjustedDate.setDate(adjustedDate.getDate() + 1); 
+      const formattedDate = adjustedDate.toISOString().split("T")[0];
+      await axios.post("http://localhost:5000/api/expenses", {
+        ...expense,
+        date: formattedDate, 
+      });
       onClose();
       window.location.reload();
     } catch (err) {
@@ -41,7 +48,8 @@ const ExpenseForm = ({ onClose }) => {
       setLoading(false);
       setExpense({ amount: "", category: "", date: "", description: "" });
     }
-  };
+};
+
 
   return (
     <Container sx={{ mt: 4 }}>

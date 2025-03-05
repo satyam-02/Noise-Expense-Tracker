@@ -17,11 +17,11 @@ const FilterBar = ({ filters, setFilters, onFilterChange, filterType }) => {
   const handleClearFilters = () => {
     const clearedFilters = { category: "", date: "" };
     setFilters(clearedFilters);
-    onFilterChange(clearedFilters); // Clear filters in parent component
+    onFilterChange(clearedFilters); 
   };
 
   const handleApplyFilters = () => {
-    onFilterChange(filters); // Trigger API call with selected filters
+    onFilterChange(filters); 
   };
 
   return (

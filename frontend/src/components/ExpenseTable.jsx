@@ -1,7 +1,19 @@
-import React from "react";
-import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography, TablePagination } from "@mui/material";
 
 const ExpenseTable = ({ expenses }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10); 
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <div
       style={{
@@ -40,17 +52,29 @@ const ExpenseTable = ({ expenses }) => {
               </TableCell>
             </TableRow>
           ) : (
-            expenses.map((expense) => (
-              <TableRow key={expense.id}>
-               <TableCell>{new Date(expense.date).toISOString().split("T")[0]}</TableCell>
-                <TableCell>{expense.category}</TableCell>
-                <TableCell>₹{expense.amount}</TableCell>
-                <TableCell>{expense.description}</TableCell>
-              </TableRow>
-            ))
+            expenses
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Paginate data
+              .map((expense) => (
+                <TableRow key={expense.id}>
+                  <TableCell>{new Date(expense.date).toISOString().split("T")[0]}</TableCell>
+                  <TableCell>{expense.category}</TableCell>
+                  <TableCell>₹{expense.amount}</TableCell>
+                  <TableCell>{expense.description}</TableCell>
+                </TableRow>
+              ))
           )}
         </TableBody>
       </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 15]}
+        component="div"
+        count={expenses.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

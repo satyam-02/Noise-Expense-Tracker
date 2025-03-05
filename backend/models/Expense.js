@@ -3,9 +3,12 @@ const db = require("../config");
 class Expense {
   static async add(expense) {
     const { amount, category, date, description } = expense;
+
+    const formattedDate = new Date(date).toISOString().substring(0, 10);
+
     return db.execute(
       "INSERT INTO expenses (amount, category, date, description) VALUES (?, ?, ?, ?)",
-      [amount, category, date, description]
+      [amount, category, formattedDate, description]
     );
   }
 
@@ -14,17 +17,22 @@ class Expense {
     let params = [];
 
     if (filters.category) {
-      query += " AND category = ?";
-      params.push(filters.category);
+        query += " AND category = ?";
+        params.push(filters.category);
     }
 
     if (filters.date) {
-      query += " AND date = ?";
-      params.push(filters.date);
+        const adjustedDate = new Date(filters.date);
+        adjustedDate.setDate(adjustedDate.getDate() + 1);
+        const formattedDate = adjustedDate.toISOString().split("T")[0]; 
+
+        query += " AND date = ?";
+        params.push(formattedDate);
     }
 
     return db.execute(query, params);
-  }
+}
+
 
   static async getTotal(start, end) {
     return db.execute(
