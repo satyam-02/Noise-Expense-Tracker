@@ -28,7 +28,7 @@ https://drive.google.com/file/d/1xu6Jikom9qOHG3765-4xL77u2uEcVu2-/view?usp=shari
 ### Backend Setup
 1. Clone the repository:
    ```sh
-   git clone https://github.com/satyam-02/expense-tracker.git
+   gh repo clone satyam-02/Noise-Expense-Tracker
    cd expense-tracker/backend
    ```
 2. Install dependencies:
