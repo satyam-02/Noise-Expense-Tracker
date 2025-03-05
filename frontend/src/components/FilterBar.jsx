@@ -12,13 +12,16 @@ const FilterBar = ({ filters, setFilters, onFilterChange, filterType }) => {
     };
 
     setFilters(updatedFilters);
-    onFilterChange(updatedFilters); // Trigger API call in parent component
   };
 
   const handleClearFilters = () => {
     const clearedFilters = { category: "", date: "" };
     setFilters(clearedFilters);
-    onFilterChange(clearedFilters);
+    onFilterChange(clearedFilters); // Clear filters in parent component
+  };
+
+  const handleApplyFilters = () => {
+    onFilterChange(filters); // Trigger API call with selected filters
   };
 
   return (
@@ -50,8 +53,12 @@ const FilterBar = ({ filters, setFilters, onFilterChange, filterType }) => {
             fullWidth
           />
 
+          <Button variant="outlined" color="secondary" onClick={handleApplyFilters}>
+            Filter
+          </Button>
+
           <Button variant="outlined" color="secondary" onClick={handleClearFilters}>
-            Clear Filters
+            Clear
           </Button>
         </>
       )}

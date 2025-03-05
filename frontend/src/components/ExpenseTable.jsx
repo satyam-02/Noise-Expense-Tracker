@@ -1,25 +1,19 @@
 import React from "react";
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@mui/material";
 
 const ExpenseTable = ({ expenses }) => {
   return (
     <div
       style={{
         boxShadow: "0px 0px 15px 5px rgba(0, 0, 0, 0.2)",
-
         borderRadius: "8px",
         overflow: "hidden",
         margin: "20px auto",
         maxWidth: "800px",
+        backgroundColor: "white",
       }}
     >
-      <Table style={{ backgroundColor: "white" }}>
+      <Table>
         <TableHead>
           <TableRow style={{ backgroundColor: "#f4f4f4" }}>
             <TableCell>
@@ -37,14 +31,24 @@ const ExpenseTable = ({ expenses }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {expenses.map((expense) => (
-            <TableRow key={expense.id}>
-              <TableCell>{expense.date}</TableCell>
-              <TableCell>{expense.category}</TableCell>
-              <TableCell>₹{expense.amount}</TableCell>
-              <TableCell>{expense.description}</TableCell>
+          {expenses.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} align="center">
+                <Typography variant="h6" color="textSecondary">
+                  No results found
+                </Typography>
+              </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            expenses.map((expense) => (
+              <TableRow key={expense.id}>
+                <TableCell>{expense.date}</TableCell>
+                <TableCell>{expense.category}</TableCell>
+                <TableCell>₹{expense.amount}</TableCell>
+                <TableCell>{expense.description}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

@@ -4,7 +4,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseTable from "./components/ExpenseTable";
-import { Button, Dialog, DialogTitle, DialogContent, Collapse } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, Collapse, Typography, Box } from "@mui/material";
 import FilterBar from "./components/FilterBar";
 import TotalExpense from "./components/TotalExpense";
 
@@ -93,11 +93,14 @@ function App() {
       <ExpenseTable expenses={expenses} />
 
       <Dialog open={openExpenseModal} onClose={() => setOpenExpenseModal(false)}>
-        <DialogTitle>Add Expense</DialogTitle>
-        <DialogContent>
-          <ExpenseForm onClose={() => setOpenExpenseModal(false)} />
-        </DialogContent>
-      </Dialog>
+  <Box display="flex" justifyContent="center" alignItems="center" p={2}>
+    <Typography variant="h4" fontWeight="bold">Add Expense</Typography>
+  </Box>
+
+  <Box marginBottom="50px">
+    <ExpenseForm onClose={() => setOpenExpenseModal(false)} />
+  </Box>
+</Dialog>
     </>
   );
 }
