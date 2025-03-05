@@ -2,6 +2,9 @@
 
 A simple Expense Tracker application that allows users to add, view, filter, and calculate total expenses.
 
+## Video demo
+https://drive.google.com/file/d/1xu6Jikom9qOHG3765-4xL77u2uEcVu2-/view?usp=sharing
+
 ## 🚀 Features
 - Add expenses with details (amount, category, date, and description).
 - View a list of recorded expenses.
