@@ -34,12 +34,15 @@ class Expense {
 }
 
 
-  static async getTotal(start, end) {
-    return db.execute(
-      "SELECT SUM(amount) AS total FROM expenses WHERE date BETWEEN ? AND ?",
-      [start, end]
-    );
-  }
+static async getTotal(start, end) {
+  const startDate = new Date(start);
+  startDate.setDate(startDate.getDate() + 1);
+  return db.execute(
+    "SELECT SUM(amount) AS total FROM expenses WHERE date BETWEEN ? AND ?",
+    [startDate.toISOString().split("T")[0], end]
+  );
+}
+
 }
 
 module.exports = Expense;
