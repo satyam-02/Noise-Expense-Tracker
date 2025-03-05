@@ -99,7 +99,7 @@ const ExpenseForm = ({ onClose }) => {
           sx={{ mt: 2 }}
           disabled={loading || !isFormValid}
         >
-          {loading ? "Adding..." : "Add Expense"}
+          {loading ? "Adding..." : "Submit"}
         </Button>
       </form>
     </Container>

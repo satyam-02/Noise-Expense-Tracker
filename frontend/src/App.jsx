@@ -77,7 +77,7 @@ function App() {
           {totalExpenseOpen ? "Hide Total Expense" : "View Total Expense"}
         </Button>
 
-        <Button variant="contained" color="primary" onClick={() => setOpenExpenseModal(true)}>
+        <Button variant="contained" color="secondary" onClick={() => setOpenExpenseModal(true)}>
           Add Expense
         </Button>
       </div>

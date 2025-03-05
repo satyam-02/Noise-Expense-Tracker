@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { TextField, Typography, Button } from "@mui/material";
 import axios from "axios";
 
 const TotalExpense = () => {
   const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [totalExpense, setTotalExpense] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,23 +15,24 @@ const TotalExpense = () => {
     }));
   };
 
-  useEffect(() => {
-    const fetchTotalExpense = async () => {
-      if (dates.startDate && dates.endDate) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5000/api/expenses/total?start=${dates.startDate}&end=${dates.endDate}`
-          );
-          setTotalExpense(response.data.total);
-        } catch (error) {
-          console.error("Error fetching total expenses:", error);
-          setTotalExpense("Error fetching data");
-        }
-      }
-    };
+  const fetchTotalExpense = async () => {
+    if (!dates.startDate || !dates.endDate) {
+      alert("Please select both start and end dates");
+      return;
+    }
 
-    fetchTotalExpense();
-  }, [dates.startDate, dates.endDate]); // Trigger API call when both dates are set
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/expenses/total?start=${dates.startDate}&end=${dates.endDate}`
+      );
+      setTotalExpense(response.data.total);
+    } catch (error) {
+      console.error("Error fetching total expenses:", error);
+      setTotalExpense("Error fetching data");
+    }
+    setLoading(false);
+  };
 
   return (
     <div>
@@ -53,8 +55,17 @@ const TotalExpense = () => {
         fullWidth
         style={{ marginTop: "10px" }}
       />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={fetchTotalExpense}
+        disabled={loading}
+        style={{ marginTop: "15px" }}
+      >
+        {loading ? "Fetching..." : "Calculate"}
+      </Button>
       {totalExpense !== null && (
-        <Typography variant="h6" style={{ marginTop: "15px" }}>
+        <Typography variant="h6" color="black" style={{ marginTop: "15px" }}>
           Total Expense: ₹{totalExpense}
         </Typography>
       )}
